@@ -13,14 +13,11 @@ import {
 import app from "../firebase/firebase.init";
 import { useEffect, useState } from "react";
 import PropTypes from "prop-types";
-import useAxiosPublic from "../hooks/useAxiosPublic";
-
 
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 
 const AuthProvider = ({ children }) => {
-  const axiosPublic = useAxiosPublic();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [email, setEmail] = useState("");
@@ -80,45 +77,15 @@ const AuthProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-      setUser(null); // Clear user data while fetching
-      setLoading(true);
-
-      if (currentUser) {
-        const userInfo = {email: currentUser.email}
-        await axiosPublic.post('/jwt', userInfo)
-        .then(res=>{
-          if(res.data.token){
-            localStorage.setItem('access-token', res.data.token)
-          }
-        })
-        try {
-          // Fetch user data from backend using their email
-          const response = await axiosPublic.get(`/users/${currentUser.email}`);
-
-          if (response.status == 200) {
-            // Merge Firebase data with backend data if needed
-            setUser({
-              ...currentUser,
-              ...response.data, // Merge backend data
-            });
-          } else {
-            setUser(currentUser); // Fallback to Firebase user if backend fetch fails
-          }
-        } catch {
-          setUser(currentUser); // Fallback to Firebase user in case of an error
-        }
-      } else{
-        localStorage.removeItem('access-token')
-      }
-
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
       setLoading(false);
     });
 
     return () => {
       unsubscribe();
     };
-  }, [axiosPublic]);
+  }, []);
 
   return (
     <AuthContext.Provider value={authInfo}>{children}</AuthContext.Provider>

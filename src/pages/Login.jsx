@@ -13,7 +13,7 @@ const Login = () => {
   const axiosPublic = useAxiosPublic();
   const [loading, setLoading] = useState(false);
   const [showPass, setShowPass] = useState(false);
-  const { loginUser, setUser, setEmail } = useAuth();
+  const { loginUser, setUser, setEmail, setLoading: setAuthLoading } = useAuth();
   const [defaultEmail, setDefaultEmail] = useState("")
   const [defaultPass, setDefaultPass] = useState("")
   const navigate = useNavigate();
@@ -36,6 +36,7 @@ const Login = () => {
         await axiosPublic.patch(`/users/${user.email}`).then((response) => {
           setUser(response.data.user);
           setLoading(false);
+          setAuthLoading(false)
           Swal.fire("Success!", "Successfully Logged In!", "success");
           navigate(location?.state ? location.state : "/");
         });
@@ -45,6 +46,7 @@ const Login = () => {
         const errorMessage = error.message;
         Swal.fire("Error!", `${errorCode} ${errorMessage}`, "error");
         setLoading(false);
+        setAuthLoading(false)
       });
   };
 
@@ -64,24 +66,12 @@ const Login = () => {
 
       <SocialLogin></SocialLogin>
 
-      <div className="flex justify-between w-full">
+      <div className="flex justify-center w-full">
         <button type="button" onClick={()=>{
-          setDefaultEmail("admin@truefit.com")
-          setDefaultPass("Admin123")
+          setDefaultEmail("user@task.com")
+          setDefaultPass("User123")
         }} className="bg-blue-500 px-3 py-1 rounded-full text-white">
-          Admin Login
-        </button>
-        <button type="button" onClick={()=>{
-          setDefaultEmail("trainer@truefit.com")
-          setDefaultPass("Trainer123")
-        }} className="bg-blue-500 px-3 py-1 rounded-full text-white">
-          Trainer Login
-        </button>
-        <button type="button" onClick={()=>{
-          setDefaultEmail("member@truefit.com")
-          setDefaultPass("Member123")
-        }} className="bg-blue-500 px-3 py-1 rounded-full text-white">
-          Member Login
+          Test Credentials: user@task.com, User123
         </button>
       </div>
 
