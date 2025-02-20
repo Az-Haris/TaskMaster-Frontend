@@ -32,30 +32,13 @@ const Navbar = () => {
             <hr className="w-2/4 border-none h-[1.5px] bg-gray-700 hidden" />
           </NavLink>
 
-          <NavLink to={"/classes"} className="flex flex-col items-center gap-1">
-            <p>All Class</p>{" "}
-            <hr className="w-2/4 border-none h-[1.5px] bg-gray-700 hidden" />
-          </NavLink>
 
           <NavLink to={"/forum"} className="flex flex-col items-center gap-1">
             <p>Forum</p>{" "}
             <hr className="w-2/4 border-none h-[1.5px] bg-gray-700 hidden" />
           </NavLink>
 
-          <NavLink to={"/about"} className="flex flex-col items-center gap-1">
-            <p>About</p>{" "}
-            <hr className="w-2/4 border-none h-[1.5px] bg-gray-700 hidden" />
-          </NavLink>
 
-          {user && (
-            <NavLink
-              to={"/dashboard"}
-              className="flex flex-col items-center gap-1"
-            >
-              <p>Dashboard</p>{" "}
-              <hr className="w-2/4 border-none h-[1.5px] bg-gray-700 hidden" />
-            </NavLink>
-          )}
         </ul>
 
         <div className="flex items-center gap-3">
