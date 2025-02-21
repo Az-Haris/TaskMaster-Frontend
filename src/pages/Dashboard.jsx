@@ -65,51 +65,68 @@ const Dashboard = () => {
   // Handle drag end event
   const handleDragEnd = (e) => {
     const { active, over } = e;
-    if (!over) return;
-
+    if (!over) return; // If no drop target, exit
+  
     const activeId = active.id;
     const overId = over.id;
-
-    if (activeId === overId) return;
-
+  
     setTasks((tasks) => {
+      const activeTask = tasks.find((task) => task.id === activeId);
+      if (!activeTask) return tasks; // Safety check
+  
+      // Check if dropping into an empty column
+      if (["To-Do", "In Progress", "Done"].includes(overId)) {
+        return tasks.map((task) =>
+          task.id === activeId ? { ...task, category: overId } : task
+        );
+      }
+  
+      // Otherwise, reorder within the same column
       const originalPosition = getTaskPosition(active.id);
       const newPosition = getTaskPosition(over.id);
-
       const reorderedTasks = arrayMove(tasks, originalPosition, newPosition);
-
+  
       return reorderedTasks.map((task) => {
         if (task.id === active.id) {
           const overTask = tasks.find((task) => task.id === over.id);
-          task.category = overTask.category;
+          task.category = overTask?.category || task.category;
         }
         return task;
       });
     });
   };
+  
 
   const handleDragOver = (e) => {
     const { active, over } = e;
     if (!over) return;
-  
+
     const activeId = active.id;
     const overId = over.id;
-  
-    if (activeId === overId) return;
-  
+
     setTasks((tasks) => {
       const activeTask = tasks.find((task) => task.id === activeId);
+      if (!activeTask) return tasks; // Safety check
+
+      // Check if overId is a task or a column
       const overTask = tasks.find((task) => task.id === overId);
-  
-      if (!activeTask || !overTask) return tasks;
-  
-      // If the active task is dragged over a different category
-      if (activeTask.category !== overTask.category) {
+
+      if (overTask) {
+        // If dragging over a task, use its category
+        if (activeTask.category !== overTask.category) {
+          return tasks.map((task) =>
+            task.id === activeId
+              ? { ...task, category: overTask.category }
+              : task,
+          );
+        }
+      } else if (["To-Do", "In Progress", "Done"].includes(overId)) {
+        // If dragging over an empty column, update category to the column name
         return tasks.map((task) =>
-          task.id === activeId ? { ...task, category: overTask.category } : task
+          task.id === activeId ? { ...task, category: overId } : task,
         );
       }
-  
+
       return tasks;
     });
   };
@@ -130,18 +147,17 @@ const Dashboard = () => {
       >
         <div className="columns-container container mx-auto">
           <Column
-            className="flex-1"
-            tasks={tasks.filter((task) => task.category === "To-Do")}
+            tasks={tasks?.filter((task) => task.category === "To-Do") || []}
             category={"To-Do"}
           />
           <Column
-            className="flex-1"
-            tasks={tasks.filter((task) => task.category === "In Progress")}
-            category={"In-Progress"}
+            tasks={
+              tasks?.filter((task) => task.category === "In Progress") || []
+            }
+            category={"In Progress"}
           />
           <Column
-            className="flex-1"
-            tasks={tasks.filter((task) => task.category === "Done")}
+            tasks={tasks?.filter((task) => task.category === "Done") || []}
             category={"Done"}
           />
         </div>
