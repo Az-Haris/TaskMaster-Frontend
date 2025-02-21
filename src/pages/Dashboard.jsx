@@ -1,21 +1,50 @@
 import { useState } from "react";
-import { DndContext, PointerSensor, TouchSensor, closestCorners, useSensor, useSensors } from "@dnd-kit/core";
+import {
+  DndContext,
+  PointerSensor,
+  TouchSensor,
+  closestCorners,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
 import Input from "../components/input/Input";
 import Column from "../components/column/Column";
-import './Dashboard.css'
-import useAuth from "../hooks/useAuth";
+import "./Dashboard.css";
 
 // Initial tasks with title, description, and timestamp
 const initialTasks = [
-  { id: "1", title: "Task 1", description: "Description of Task 1", category: "To-Do", timestamp: Date.now() },
-  { id: "2", title: "Task 2", description: "Description of Task 2", category: "In Progress", timestamp: Date.now() },
-  { id: "3", title: "Task 3", description: "Description of Task 3", category: "Done", timestamp: Date.now() },
-  { id: "4", title: "Task 4", description: "Description of Task 4", category: "To-Do", timestamp: Date.now() },
+  {
+    id: "1",
+    title: "Task 1",
+    description: "Description of Task 1",
+    category: "To-Do",
+    timestamp: Date.now(),
+  },
+  {
+    id: "2",
+    title: "Task 2",
+    description: "Description of Task 2",
+    category: "In Progress",
+    timestamp: Date.now(),
+  },
+  {
+    id: "3",
+    title: "Task 3",
+    description: "Description of Task 3",
+    category: "Done",
+    timestamp: Date.now(),
+  },
+  {
+    id: "4",
+    title: "Task 4",
+    description: "Description of Task 4",
+    category: "To-Do",
+    timestamp: Date.now(),
+  },
 ];
 
 const Dashboard = () => {
-  const {user} = useAuth()
   const [tasks, setTasks] = useState(initialTasks);
 
   // Add new task
@@ -36,8 +65,12 @@ const Dashboard = () => {
   // Handle drag end event
   const handleDragEnd = (e) => {
     const { active, over } = e;
+    if (!over) return;
 
-    if (active.id === over.id) return;
+    const activeId = active.id;
+    const overId = over.id;
+
+    if (activeId === overId) return;
 
     setTasks((tasks) => {
       const originalPosition = getTaskPosition(active.id);
@@ -55,19 +88,62 @@ const Dashboard = () => {
     });
   };
 
+  const handleDragOver = (e) => {
+    const { active, over } = e;
+    if (!over) return;
+  
+    const activeId = active.id;
+    const overId = over.id;
+  
+    if (activeId === overId) return;
+  
+    setTasks((tasks) => {
+      const activeTask = tasks.find((task) => task.id === activeId);
+      const overTask = tasks.find((task) => task.id === overId);
+  
+      if (!activeTask || !overTask) return tasks;
+  
+      // If the active task is dragged over a different category
+      if (activeTask.category !== overTask.category) {
+        return tasks.map((task) =>
+          task.id === activeId ? { ...task, category: overTask.category } : task
+        );
+      }
+  
+      return tasks;
+    });
+  };
+
   // Drag-and-drop sensors
   const sensors = useSensors(useSensor(PointerSensor), useSensor(TouchSensor));
 
   return (
     <div className="dashboard">
-      <DndContext sensors={sensors} onDragEnd={handleDragEnd} collisionDetection={closestCorners}>
-        <div className="max-w-96 mt-6 px-3 mx-auto">
+      <div className="max-w-96 mt-6 px-3 mx-auto">
         <Input onSubmit={addTask} />
-        </div>
-        <div className="columns-container">
-          <Column tasks={tasks.filter((task) => task.category === "To-Do")} category={'To-Do'} />
-          <Column tasks={tasks.filter((task) => task.category === "In Progress")} category={'In-Progress'} />
-          <Column tasks={tasks.filter((task) => task.category === "Done")} category={'Done'} />
+      </div>
+      <DndContext
+        sensors={sensors}
+        onDragEnd={handleDragEnd}
+        onDragOver={handleDragOver}
+        collisionDetection={closestCorners}
+      >
+        <div className="columns-container container mx-auto">
+          <Column
+            className="flex-1"
+            tasks={tasks.filter((task) => task.category === "To-Do")}
+            category={"To-Do"}
+          />
+          <Column
+            className="flex-1"
+            tasks={tasks.filter((task) => task.category === "In Progress")}
+            category={"In-Progress"}
+          />
+          <Column
+            className="flex-1"
+            tasks={tasks.filter((task) => task.category === "Done")}
+            category={"Done"}
+          />
         </div>
       </DndContext>
     </div>
