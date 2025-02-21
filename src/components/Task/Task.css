@@ -1,0 +1,16 @@
+.task{
+    background-color: white;
+    border-radius: 5px;
+    box-shadow: rgba(0,0,0, 0.16);
+    width: 100%;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    touch-action: none;
+}
+
+.checkbox{
+    height: 20px;
+    width: 20px;
+}
