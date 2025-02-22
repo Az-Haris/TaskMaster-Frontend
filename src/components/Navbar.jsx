@@ -49,12 +49,12 @@ const Navbar = () => {
                       <p className="text-xl">Welcome, </p>
                       <p>{user?.fullName || user?.displayName}</p>
                       <p className="">---</p>
-                      <Link
+                      {/* <Link
                         to={"/dashboard"}
                         className="cursor-pointer hover:text-black"
                       >
                         Dashboard
-                      </Link>
+                      </Link> */}
                       <p
                         onClick={() => {
                           logOut()
@@ -77,7 +77,7 @@ const Navbar = () => {
                               );
                             });
                         }}
-                        className="cursor-pointer hover:text-black"
+                        className="cursor-pointer text-white pl-2 rounded-md py-1 bg-red-400 hover:bg-red-500"
                       >
                         Logout
                       </p>
