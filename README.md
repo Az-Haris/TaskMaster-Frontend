@@ -1,9 +1,5 @@
 ## TaskMaster : Task Management App's Frontend
 
-
-```md
-# TaskMaster - Task Management App (Frontend)
-
 TaskMaster is a web-based task management application that allows users to add, update, and organize tasks using drag-and-drop functionality.
 
 ## 🚀 Live Demo
@@ -54,4 +50,3 @@ TaskMaster is a web-based task management application that allows users to add, 
 
 ## 🤝 Contributing
 Pull requests are welcome! Feel free to fork and enhance the project.
-```
