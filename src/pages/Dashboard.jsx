@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   DndContext,
   PointerSensor,
@@ -11,52 +11,83 @@ import { arrayMove } from "@dnd-kit/sortable";
 import Input from "../components/input/Input";
 import Column from "../components/column/Column";
 import "./Dashboard.css";
+import useAxiosPublic from "../hooks/useAxiosPublic";
+import useAuth from "../hooks/useAuth";
 
 // Initial tasks with title, description, and timestamp
-const initialTasks = [
-  {
-    id: "1",
-    title: "Task 1",
-    description: "Description of Task 1",
-    category: "To-Do",
-    timestamp: Date.now(),
-  },
-  {
-    id: "2",
-    title: "Task 2",
-    description: "Description of Task 2",
-    category: "In Progress",
-    timestamp: Date.now(),
-  },
-  {
-    id: "3",
-    title: "Task 3",
-    description: "Description of Task 3",
-    category: "Done",
-    timestamp: Date.now(),
-  },
-  {
-    id: "4",
-    title: "Task 4",
-    description: "Description of Task 4",
-    category: "To-Do",
-    timestamp: Date.now(),
-  },
-];
+// const initialTasks = [
+//   {
+//     id: "1",
+//     title: "Task 1",
+//     description: "Description of Task 1",
+//     category: "To-Do",
+//     timestamp: Date.now(),
+//   },
+//   {
+//     id: "2",
+//     title: "Task 2",
+//     description: "Description of Task 2",
+//     category: "In Progress",
+//     timestamp: Date.now(),
+//   },
+//   {
+//     id: "3",
+//     title: "Task 3",
+//     description: "Description of Task 3",
+//     category: "Done",
+//     timestamp: Date.now(),
+//   },
+//   {
+//     id: "4",
+//     title: "Task 4",
+//     description: "Description of Task 4",
+//     category: "To-Do",
+//     timestamp: Date.now(),
+//   },
+// ];
 
 const Dashboard = () => {
-  const [tasks, setTasks] = useState(initialTasks);
+  const [tasks, setTasks] = useState([]);
+  const axiosPublic = useAxiosPublic();
+  const { user } = useAuth();
+
+
+
+  useEffect(() => {
+    const fetchTasks = async () => {
+      try {
+        const res = await axiosPublic.get(`/tasks/${user?.email}`);
+        setTasks(res.data || []); // Extract tasks array
+        console.log(res.data);
+      } catch (error) {
+        console.error("Error fetching tasks:", error);
+        setTasks([]); // Set empty array to prevent crash
+      }
+    };
+
+    if (user?.email) fetchTasks();
+  }, [axiosPublic, user?.email]);
 
   // Add new task
-  const addTask = (title, description) => {
+  const addTask = async (title, description) => {
     const newTask = {
-      id: (tasks.length + 1).toString(),
+      id: Date.now().toString(),
       title,
       description,
       category: "To-Do",
       timestamp: Date.now(),
     };
     setTasks((tasks) => [...tasks, newTask]);
+
+    // save to db
+    try {
+      await axiosPublic.post("/tasks", {
+        userEmail: user?.email,
+        task: newTask,
+      });
+    } catch (error) {
+      console.error("Error adding task:", error);
+    }
   };
 
   // Get task position by ID
@@ -66,26 +97,26 @@ const Dashboard = () => {
   const handleDragEnd = (e) => {
     const { active, over } = e;
     if (!over) return; // If no drop target, exit
-  
+
     const activeId = active.id;
     const overId = over.id;
-  
+
     setTasks((tasks) => {
       const activeTask = tasks.find((task) => task.id === activeId);
       if (!activeTask) return tasks; // Safety check
-  
+
       // Check if dropping into an empty column
       if (["To-Do", "In Progress", "Done"].includes(overId)) {
         return tasks.map((task) =>
-          task.id === activeId ? { ...task, category: overId } : task
+          task.id === activeId ? { ...task, category: overId } : task,
         );
       }
-  
+
       // Otherwise, reorder within the same column
       const originalPosition = getTaskPosition(active.id);
       const newPosition = getTaskPosition(over.id);
       const reorderedTasks = arrayMove(tasks, originalPosition, newPosition);
-  
+
       return reorderedTasks.map((task) => {
         if (task.id === active.id) {
           const overTask = tasks.find((task) => task.id === over.id);
