@@ -13,6 +13,7 @@ import Column from "../components/column/Column";
 import "./Dashboard.css";
 import useAxiosPublic from "../hooks/useAxiosPublic";
 import useAuth from "../hooks/useAuth";
+import Login from "./Login";
 
 // Initial tasks with title, description, and timestamp
 // const initialTasks = [
@@ -50,6 +51,7 @@ const Dashboard = () => {
   const [tasks, setTasks] = useState([]);
   const axiosPublic = useAxiosPublic();
   const { user } = useAuth();
+
 
 
 
@@ -164,6 +166,11 @@ const Dashboard = () => {
   // Drag-and-drop sensors
   const sensors = useSensors(useSensor(PointerSensor), useSensor(TouchSensor));
 
+
+  
+  if(!user) return <Login></Login>
+
+  
   return (
     <div className="dashboard">
       <div className="max-w-96 mt-6 px-3 mx-auto">
