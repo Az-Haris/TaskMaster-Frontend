@@ -1,16 +1,16 @@
 import "../index.css";
-import { Link, NavLink } from "react-router";
+import { Link } from "react-router";
 import { Button, Spinner } from "flowbite-react";
-import { BiMenuAltRight } from "react-icons/bi";
-import { useState } from "react";
-import { RxCross1 } from "react-icons/rx";
+// import { BiMenuAltRight } from "react-icons/bi";
+// import { useState } from "react";
+// import { RxCross1 } from "react-icons/rx";
 import Logo from "./Logo";
 import Swal from "sweetalert2";
 import ThemeToggle from "../utils/ThemeToggle";
 import useAuth from "../hooks/useAuth";
 
 const Navbar = () => {
-  const [visible, setVisible] = useState(false);
+  // const [visible, setVisible] = useState(false);
   const { user, logOut, setLoading, loading } = useAuth();
 
   return (
@@ -18,28 +18,13 @@ const Navbar = () => {
       <div className="container mx-auto px-3 flex items-center justify-between">
         <Logo></Logo>
 
-        <ul className="hidden sm:flex gap-5 text-sm text-gray-700 dark:text-gray-300 uppercase">
+        {/* <ul className="hidden sm:flex gap-5 text-sm text-gray-700 dark:text-gray-300 uppercase">
           <NavLink to={"/"} className="flex flex-col items-center gap-1">
-            <p>Home</p>{" "}
+            <p>Dashboard</p>{" "}
             <hr className="w-2/4 border-none h-[1.5px] bg-gray-700 hidden" />
           </NavLink>
 
-          <NavLink
-            to={"/trainers"}
-            className="flex flex-col items-center gap-1"
-          >
-            <p>All Trainer</p>{" "}
-            <hr className="w-2/4 border-none h-[1.5px] bg-gray-700 hidden" />
-          </NavLink>
-
-
-          <NavLink to={"/forum"} className="flex flex-col items-center gap-1">
-            <p>Forum</p>{" "}
-            <hr className="w-2/4 border-none h-[1.5px] bg-gray-700 hidden" />
-          </NavLink>
-
-
-        </ul>
+        </ul> */}
 
         <div className="flex items-center gap-3">
           <ThemeToggle></ThemeToggle>
@@ -109,14 +94,14 @@ const Navbar = () => {
             </>
           )}
 
-          <BiMenuAltRight
+          {/* <BiMenuAltRight
             onClick={() => setVisible(true)}
             className="text-4xl sm:text-5xl cursor-pointer sm:hidden"
-          />
+          /> */}
         </div>
 
         {/* Sidebar menu for small screen */}
-        <div
+        {/* <div
           className={`absolute top-0 right-0 bottom-0 overflow-hidden bg-white dark:bg-gray-800 transition-all z-10 min-h-screen ${
             visible ? "w-full" : "w-0"
           }`}
@@ -169,7 +154,7 @@ const Navbar = () => {
               )}
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );
