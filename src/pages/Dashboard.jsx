@@ -95,7 +95,6 @@ const Dashboard = () => {
       });
     });
   };
-  
 
   const handleDragOver = (e) => {
     const { active, over } = e;
