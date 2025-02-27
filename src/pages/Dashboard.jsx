@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import {
   DndContext,
   PointerSensor,
@@ -14,53 +14,20 @@ import "./Dashboard.css";
 import useAxiosPublic from "../hooks/useAxiosPublic";
 import useAuth from "../hooks/useAuth";
 import Login from "./Login";
-
-// Initial tasks with title, description, and timestamp
-// const initialTasks = [
-//   {
-//     id: "1",
-//     title: "Task 1",
-//     description: "Description of Task 1",
-//     category: "To-Do",
-//     timestamp: Date.now(),
-//   },
-//   {
-//     id: "2",
-//     title: "Task 2",
-//     description: "Description of Task 2",
-//     category: "In Progress",
-//     timestamp: Date.now(),
-//   },
-//   {
-//     id: "3",
-//     title: "Task 3",
-//     description: "Description of Task 3",
-//     category: "Done",
-//     timestamp: Date.now(),
-//   },
-//   {
-//     id: "4",
-//     title: "Task 4",
-//     description: "Description of Task 4",
-//     category: "To-Do",
-//     timestamp: Date.now(),
-//   },
-// ];
+import { Spinner } from "flowbite-react";
+import useTask from "../hooks/useTask";
+import { assets } from "../assets/assets";
 
 const Dashboard = () => {
-  const [tasks, setTasks] = useState([]);
+  const {tasks, setTasks} = useTask()
   const axiosPublic = useAxiosPublic();
-  const { user } = useAuth();
-
-
-
+  const { user, loading } = useAuth();
 
   useEffect(() => {
     const fetchTasks = async () => {
       try {
         const res = await axiosPublic.get(`/tasks/${user?.email}`);
         setTasks(res.data || []); // Extract tasks array
-        console.log(res.data);
       } catch (error) {
         console.error("Error fetching tasks:", error);
         setTasks([]); // Set empty array to prevent crash
@@ -68,7 +35,7 @@ const Dashboard = () => {
     };
 
     if (user?.email) fetchTasks();
-  }, [axiosPublic, user?.email]);
+  }, [axiosPublic, setTasks, user?.email]);
 
   // Add new task
   const addTask = async (title, description) => {
@@ -92,41 +59,44 @@ const Dashboard = () => {
     }
   };
 
-  // Get task position by ID
-  const getTaskPosition = (id) => tasks.findIndex((task) => task.id === id);
-
   // Handle drag end event
-  const handleDragEnd = (e) => {
+  const handleDragEnd = async (e) => {
     const { active, over } = e;
-    if (!over) return; // If no drop target, exit
+    if (!over) return;
 
     const activeId = active.id;
     const overId = over.id;
 
     setTasks((tasks) => {
       const activeTask = tasks.find((task) => task.id === activeId);
-      if (!activeTask) return tasks; // Safety check
+      if (!activeTask) return tasks;
 
       // Check if dropping into an empty column
       if (["To-Do", "In Progress", "Done"].includes(overId)) {
-        return tasks.map((task) =>
-          task.id === activeId ? { ...task, category: overId } : task,
+        activeTask.category = overId;
+      } else {
+        // Otherwise, reorder within the same column
+        const originalPosition = tasks.findIndex(
+          (task) => task.id === activeId,
         );
+        const newPosition = tasks.findIndex((task) => task.id === overId);
+        tasks = arrayMove(tasks, originalPosition, newPosition);
       }
 
-      // Otherwise, reorder within the same column
-      const originalPosition = getTaskPosition(active.id);
-      const newPosition = getTaskPosition(over.id);
-      const reorderedTasks = arrayMove(tasks, originalPosition, newPosition);
+      // Send updated tasks list to the backend
+      updateTasksInDB(tasks);
 
-      return reorderedTasks.map((task) => {
-        if (task.id === active.id) {
-          const overTask = tasks.find((task) => task.id === over.id);
-          task.category = overTask?.category || task.category;
-        }
-        return task;
-      });
+      return [...tasks]; // Return updated tasks list
     });
+  };
+
+  // Function to update tasks in DB
+  const updateTasksInDB = async (updatedTasks) => {
+    try {
+      await axiosPublic.put(`/tasks/${user?.email}`, { tasks: updatedTasks });
+    } catch (error) {
+      console.error("Error updating tasks:", error);
+    }
   };
 
   const handleDragOver = (e) => {
@@ -166,13 +136,18 @@ const Dashboard = () => {
   // Drag-and-drop sensors
   const sensors = useSensors(useSensor(PointerSensor), useSensor(TouchSensor));
 
+  if (loading) {
+    return (
+      <div className="min-h-screen flex justify-center items-center">
+        <Spinner color="success" aria-label="Success spinner example" />
+      </div>
+    );
+  }
 
-  
-  if(!user) return <Login></Login>
+  if (!user) return <Login></Login>;
 
-  
   return (
-    <div className="dashboard">
+    <div className="dashboard mb-20">
       <div className="max-w-96 mt-6 px-3 mx-auto">
         <Input onSubmit={addTask} />
       </div>
@@ -182,20 +157,20 @@ const Dashboard = () => {
         onDragOver={handleDragOver}
         collisionDetection={closestCorners}
       >
-        <div className="columns-container container mx-auto">
+        <div className="flex justify-center flex-col md:flex-row px-5 gap-10 container mx-auto">
           <Column
             tasks={tasks?.filter((task) => task.category === "To-Do") || []}
-            category={"To-Do"}
+            category={"To-Do"} icon={assets.Todo}
           />
           <Column
             tasks={
               tasks?.filter((task) => task.category === "In Progress") || []
             }
-            category={"In Progress"}
+            category={"In Progress"} icon={assets.Progress}
           />
           <Column
             tasks={tasks?.filter((task) => task.category === "Done") || []}
-            category={"Done"}
+            category={"Done"} icon={assets.Done}
           />
         </div>
       </DndContext>

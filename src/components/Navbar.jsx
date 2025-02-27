@@ -45,8 +45,8 @@ const Navbar = () => {
                   </div>
 
                   <div className="group-hover:block hidden absolute dropdown-menu right-0 pt-4 z-10">
-                    <div className="flex flex-col gap-2 w-52 py-3 px-5 bg-slate-100 text-gray-500 border rounded-md">
-                      <p className="text-xl">Welcome, </p>
+                    <div className="flex flex-col gap-2 w-52 py-3 px-5 bg-slate-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 border dark:border-gray-600 rounded-md">
+                      <p className="text-xl">Hello, </p>
                       <p>{user?.fullName || user?.displayName}</p>
                       <p className="">---</p>
                       {/* <Link
@@ -77,7 +77,7 @@ const Navbar = () => {
                               );
                             });
                         }}
-                        className="cursor-pointer text-white pl-2 rounded-md py-1 bg-red-400 hover:bg-red-500"
+                        className="cursor-pointer text-white pl-4 rounded-md py-1 bg-red-400 hover:bg-red-500"
                       >
                         Logout
                       </p>

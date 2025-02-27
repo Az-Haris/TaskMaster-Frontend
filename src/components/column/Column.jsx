@@ -2,7 +2,7 @@ import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable"
 import { useDroppable } from "@dnd-kit/core";
 import Task from "../Task/Task";
 
-const Column = ({ tasks, category }) => {
+const Column = ({ tasks, category, icon }) => {
   const { setNodeRef } = useDroppable({
     id: category,
   });
@@ -10,9 +10,10 @@ const Column = ({ tasks, category }) => {
   return (
     <div
       ref={setNodeRef}
-      className="mt-5 h-[500px] max-h-[500px] w-[350px] mx-auto flex flex-col bg-gray-200 rounded-lg"
+      className="mt-5 h-[500px] max-h-[500px] w-full flex flex-col bg-gray-200 dark:bg-gray-800 rounded-lg"
     >
-      <div className="bg-gray-800 text-white py-2 rounded-t-lg text-center">
+      <div className="bg-gray-800 dark:bg-gray-950 text-white py-2 rounded-t-lg flex items-center gap-2 justify-center">
+        <img src={icon} alt="" />
         <h2>{category}</h2>
       </div>
       <div className="flex-grow space-y-3 pt-3 px-3 overflow-y-auto overflow-x-hidden">
@@ -23,6 +24,7 @@ const Column = ({ tasks, category }) => {
                 key={task.id}
                 id={task.id}
                 title={task.title}
+                category={task.category}
                 description={task.description}
                 timestamp={task.timestamp}
               />

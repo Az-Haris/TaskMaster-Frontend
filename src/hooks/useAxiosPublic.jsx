@@ -3,7 +3,7 @@ import axios from 'axios'
 
 const axiosPublic = axios.create({
     // baseURL: import.meta.env.VITE_BACKEND_URI,
-    baseURL: "http://localhost:5000",
+    baseURL: "https://taskmaster-backend-mocha.vercel.app",
     withCredentials: false,
 })
 

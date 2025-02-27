@@ -22,7 +22,7 @@ const Input = ({ onSubmit }) => {
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         maxLength="50"
-        className="w-full rounded-md"
+        className="w-full rounded-md border-blue-500 dark:bg-gray-800"
         required
       />
       <textarea
@@ -30,7 +30,7 @@ const Input = ({ onSubmit }) => {
         value={description}
         onChange={(e) => setDescription(e.target.value)}
         maxLength="200"
-        className="w-full rounded-md"
+        className="w-full rounded-md border-blue-500 dark:bg-gray-800"
       />
       <button className="button" type="submit">Add Task</button>
     </form>

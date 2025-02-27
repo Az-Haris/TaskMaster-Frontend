@@ -4,7 +4,7 @@ const Modal = ({ isOpen, onClose, onSave, title, description, setTitle, setDescr
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg shadow-lg p-6 w-96">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 w-96">
         <h2 className="text-xl font-semibold mb-4">Edit Task</h2>
         
         <input
@@ -12,14 +12,14 @@ const Modal = ({ isOpen, onClose, onSave, title, description, setTitle, setDescr
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           placeholder="Title"
-          className="w-full border border-gray-300 rounded-md p-2 mb-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full border border-blue-500 dark:bg-gray-900 rounded-md p-2 mb-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
         
         <textarea
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           placeholder="Description"
-          className="w-full border border-gray-300 rounded-md p-2 mb-4 h-24 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full border border-blue-500 dark:bg-gray-900 rounded-md p-2 mb-4 h-24 focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
         
         <div className="flex justify-end gap-3">

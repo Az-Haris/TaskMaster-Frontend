@@ -6,6 +6,7 @@ import { RouterProvider } from "react-router";
 import Router from "./routes/Router.jsx";
 import { HelmetProvider } from "react-helmet-async";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import TaskProvider from "./providers/TaskProvider.jsx";
 
 const queryClient = new QueryClient();
 createRoot(document.getElementById("root")).render(
@@ -13,7 +14,9 @@ createRoot(document.getElementById("root")).render(
     <QueryClientProvider client={queryClient}>
       <HelmetProvider>
         <AuthProvider>
-          <RouterProvider router={Router}></RouterProvider>
+          <TaskProvider>
+            <RouterProvider router={Router}></RouterProvider>
+          </TaskProvider>
         </AuthProvider>
       </HelmetProvider>
     </QueryClientProvider>
